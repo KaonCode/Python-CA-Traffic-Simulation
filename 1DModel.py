@@ -11,8 +11,8 @@ import numpy as np
 import numpy.random as npran
 import matplotlib.animation as animation
 
-L = 400 # number of cells on road
-n_iters = 400 # no. iterations
+L = 100 # number of cells on road
+n_iters = 500 # no. iterations
 density = 0 # percentage of cars
 vmax = 5 #maximum velocity
 Pslow = 0.2 #probability that a car will slow down
@@ -117,7 +117,7 @@ plt.legend()
 
 Writer = animation.writers['ffmpeg']
 writer = Writer(fps=2, metadata=dict(artist='luke'), bitrate=3600)
-"""
+
 #------------------------------------------------------------------------------
 ##plot for animation imshow
 #fig2, ax2 = plt.subplots()
@@ -171,7 +171,7 @@ def animate(i):
 
 anim = animation.FuncAnimation(fig3, animate, frames=n_iters, blit=True)
 
-anim.save('Road Animation.mp4', writer=writer)
+anim.save('1D Road Animation.mp4', writer=writer)
 plt.show()
 
 #------------------------------------------------------------------------------
@@ -212,8 +212,8 @@ ani = animation.FuncAnimation(fig2, updatefig, blit=True, frames = (n_iters-L))
 
 #writing the animation to an mp4 file
 
-ani.save('im.mp4', writer=writer)
+ani.save('Scrolling 2D plot of 1D road.mp4', writer=writer)
 plt.show()
-"""
+
 
 
