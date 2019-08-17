@@ -10,18 +10,16 @@ from random import uniform, shuffle
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.random as npran
-import matplotlib.animation as animation
-
 L = 100 # number of cells on road
 n_iters = 200 # no. iterations
 density = 0 # percentage of cars
 vmax = 6 #maximum velocity
 Pslow = 0.3 #probability that a car will slow down
 Pc = 0.9
-Pcr = 0.4
+Pcr = 0.5
 tlt = 20
 Precision = 200
-Reliability =50
+Reliability =100
 changedRL=np.zeros((Precision,Reliability))
 changedLR=np.zeros((Precision,Reliability))
 jk = np.linspace(0,1,Precision)
@@ -204,16 +202,31 @@ for i in range(Precision):
 Nchange = avchangedLR + avchangedRL
 
 plt.figure(0)
-plt.plot(jk,Nchange,"bx")
+plt.plot(jk,Nchange,"bx", markersize=2, label= "Total")
+plt.plot(jk,avchangedRL,"rx", markersize=2, label= "R to L")
+plt.plot(jk,avchangedLR,"gx", markersize=2, label= "L to R")
+plt.legend()
+plt.ylabel("no. Changes ")    
+plt.xlabel(" Density / ρ ")    
+
 
 
 plt.figure(1)
-plt.plot(avchangedRL,avchangedLR,"bx")
+plt.plot(avchangedRL,avchangedLR,"bx", markersize=2)
 X= range(int(max(avchangedRL)))
 Y=X
 plt.plot(X,Y,'k-')   
 plt.xlabel("no. Changes R to L")    
-plt.ylabel("no. Changes L to R")    
-    
-    
+plt.ylabel("no. Changes L to R")   
+
+plt.figure(2)
+plt.plot(jk, (avchangedRL/avchangedLR), "mx", markersize = 2)
+plt.ylim(0,8)
+plt.ylabel("RL/LR ")    
+plt.xlabel(" Density / ρ ")    
+
+plt.figure(3)
+plt.plot(jk, (avchangedRL-avchangedLR), "cx", markersize = 2)
+plt.ylabel("RL-LR ")    
+plt.xlabel(" Density / ρ ")      
     

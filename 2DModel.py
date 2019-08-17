@@ -14,14 +14,14 @@ import matplotlib.animation as animation
 L = 100 # number of cells on road
 n_iters = 200 # no. iterations
 density = 0.0 # percentage of cars
-vmax = 4 #maximum velocity
+vmax = 6 #maximum velocity
 vmaxR = 6 #maximum velocity
 
 Pslow = 0.3 #probability that a car will slow down
-Pnew = 0.75
+Pnew = 0.02
 Pc = 0.9
 Pcr = 0.5
-tlt = 20
+tlt = 0
 
 # Initial Data Array ----------------------------------------------------------
 car_num = int(density * L)
@@ -145,7 +145,7 @@ for i in range(n_iters):
        
 #right lane change
                 
-            Rdn,Rdb, Rd2n, Rd2b =1, 1, 0, 0
+            Rdn, Rdb, Rd2n, Rd2b =1, 1, 0, 0
             while previousR[(k+Rdn)% L]<0 and k + Rdn <= L:
                 Rdn += 1  
                 
@@ -159,11 +159,11 @@ for i in range(n_iters):
                 Rd2b +=1   
               
                 
-            vR,vRn,vRb,vR2n,vR2b = 0,0,0,0,0
+            vR, vRn, vRb, vR2n, vR2b = 0,0,0,0,0
            
             vR = previousR[k] #V of current car
             if k + Rdn < L:            
-                vRn = previousR[k + Rdn]  #V of car in fron in same lane
+                vRn = previousR[k + Rdn]  #V of car in from in same lane
             if k -Rdb > 0:
                 vRb = previousR[k - Rdb]  # V of the car behind in the same lane
             if k + Rd2b > 0:
@@ -189,7 +189,18 @@ for i in range(n_iters):
 
     
     
-            
+uniqueL , countsL = np.unique(iterateL, return_counts=True)   
+uniqueR , countsR = np.unique(iterateR, return_counts=True)
+
+VL = uniqueL + 1
+VR = uniqueR + 1
+
+VelocityL = VL*countsL
+VelocityR = VR*countsR
+
+avVR = sum(VelocityR)/sum(countsR[1:])
+avVL = sum(VelocityL)/sum(countsL[1:])
+         
     # here is where the update rules need to go for two lanes     
     # take the row ,iterate along to decide is lanes need switching
     # need a row for right lane and left lane.

@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Aug 16 00:23:55 2019
+Created on Fri Aug 16 23:41:33 2019
 
 @author: lukesmith
-"""
-
-#!/usr/bin/env python3
+"""#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Thu Aug 15 19:06:39 2019
@@ -18,23 +16,26 @@ from random import uniform, shuffle
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.random as npran
-
 L = 100 # number of cells on road
-n_iters = 200 # no. iterations
+n_iters = 199 # no. iterations
 density = 0 # percentage of cars
-vmax = 4 #maximum velocity
-vmaxR = 6 #maximum velocity
-Pnew = 0.5
+vmax = 6 #maximum velocity
 Pslow = 0.3 #probability that a car will slow down
 Pc = 0.9
-Pcr = 0.4
+Pcr = 0.5
 tlt = 20
-changedRL=np.zeros((100,100))
-changedLR=np.zeros((100,100))
-jk = np.linspace(0.1,Pc,100)
-for IT in range(100):
+Precision = 300
+Reliability =100
+avVR=np.zeros((Precision,Reliability))
+avVL=np.zeros((Precision,Reliability))
+rhoL=np.zeros((Precision,Reliability))
+rhoR=np.zeros((Precision,Reliability))
+
+jk = np.linspace(0.1,1,Precision)
+
+for IT in range(Reliability):
     print(IT)
-    for z in range(100):
+    for z in range(Precision):
     
     
         # Initial Data Array ----------------------------------------------------------
@@ -195,25 +196,48 @@ for IT in range(100):
             xnL, xpL, xnR , xpR = 0, 0, 0, 0
             
     
-            zx=int(z*10)
-            previousL,currentL,iterateL,xnL,xpL = LaneUpdate(changedL,Pnew,currentL,vmax,iterateL,xnL,xpL)
-            previousR,currentR,iterateR,xnR,xpR = LaneUpdate(changedR,Pnew,currentR,vmax,iterateR,xnR,xpR)
-            changedRL[z][IT]=changeRL
-            changedLR[z][IT]=changeLR
+            previousL,currentL,iterateL,xnL,xpL = LaneUpdate(changedL,jk[z],currentL,vmax,iterateL,xnL,xpL)
+            previousR,currentR,iterateR,xnR,xpR = LaneUpdate(changedR,jk[z],currentR,vmax,iterateR,xnR,xpR)
+
+        uniqueL , countsL = np.unique(iterateL, return_counts=True)   
+        uniqueR , countsR = np.unique(iterateR, return_counts=True)
 
 
-avchangedLR= np.zeros(100)
-avchangedRL=np.zeros(100)
-    
-for i in range(100):
-    avchangedRL[i]=np.mean(changedRL[i])
-    avchangedLR[i]=np.mean(changedLR[i])
+        VelocityL = uniqueL[1:]*countsL[1:]
+        VelocityR = uniqueR[1:]*countsR[1:]
+
+        avVR[z][IT] = sum(VelocityR)/(sum(countsR[1:]))
+        avVL[z][IT] = sum(VelocityL)/(sum(countsL[1:]))
 
 
-plt.plot(avchangedRL,avchangedLR,"bx")
-X= range(100)
-Y=X
-plt.plot(X,Y,'k-')   
-plt.xlabel("no. Changes R to L")    
-plt.ylabel("no. Changes L to R")    
-    
+
+relavR=np.zeros(Precision)
+relavL=np.zeros(Precision)
+
+import math  
+for i in range(Precision):
+    relavR[i]=np.mean(avVR[i])
+    relavL[i]=np.mean(avVL[i])
+
+    if math.isnan(relavR[i]):
+        relavR[i]=0
+    if math.isnan(relavL[i]):
+        relavL[i]=0
+
+
+total = (relavR + relavL)/2
+
+plt.figure(0)
+plt.plot(jk,relavR,"cx", markersize = 2, label="Av Velocity Right lane")
+plt.plot(jk,relavL,"gx", markersize = 2, label="Av Velocity Left lane")
+plt.plot(jk,total,"bx", markersize = 2, label="Total Average Velocity")
+plt.xlabel("Density")
+plt.ylabel("Average Velocity")
+plt.legend()
+plt.grid()
+plt.ylim(1, 5.5)
+
+
+
+
+
